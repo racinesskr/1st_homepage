@@ -1,5 +1,5 @@
 # 와이즈만영재교육 하남센터
 
-제공된 블로그 PDF를 바탕으로 제작한 홈페이지 초안입니다.
+블로그 PDF를 바탕으로 제작한 홈페이지 초안입니다.
 
-정적 HTML/CSS/JavaScript 사이트입니다. Vercel Framework Preset: Other. 별도 설치 또는 빌드 명령이 필요하지 않습니다.
+정적 HTML/CSS/JavaScript 사이트. Vercel Framework Preset: Other. 설치 및 빌드 명령 없음. 출력 디렉터리: 루트.
