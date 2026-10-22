@@ -1,1 +1,20 @@
-{"version":2,"framework":null,"buildCommand":"","installCommand":"","outputDirectory":"."}
+{
+  "version": 2,
+  "framework": null,
+  "buildCommand": "",
+  "installCommand": "",
+  "outputDirectory": ".",
+  "redirects": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "hawhy.net"
+        }
+      ],
+      "destination": "https://1sthomepage-six.vercel.app/#home",
+      "permanent": false
+    }
+  ]
+}
