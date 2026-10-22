@@ -9,12 +9,12 @@
 /* Soft symbol watermark behind the hero introduction. */
 .hero{isolation:isolate}.hero-copy{position:relative}.hero-photo{z-index:1}
 .hero-copy>*:not(.hero-watermark){position:relative;z-index:1}
-.hero-watermark{position:absolute;z-index:0;pointer-events:none;user-select:none;width:560px;max-width:none;height:auto;right:-114px;top:-124px;opacity:.13;filter:grayscale(1) contrast(10);mix-blend-mode:screen;animation:logo-reveal 1.5s cubic-bezier(.22,1,.36,1) both,logo-heartbeat 2.4s ease-in-out 1.5s infinite,logo-spin 18s linear 1.5s infinite}
+.hero-watermark{position:absolute;z-index:0;pointer-events:none;user-select:none;width:560px;max-width:none;height:auto;right:-114px;top:-99px;opacity:.13;filter:grayscale(1) contrast(10);mix-blend-mode:screen;animation:logo-reveal 1.5s cubic-bezier(.22,1,.36,1) both,logo-heartbeat 2.4s ease-in-out 1.5s infinite,logo-spin 18s linear 1.5s infinite}
 @keyframes logo-reveal{from{opacity:0;transform:translateX(115px) scale(.98)}to{opacity:.13;transform:translateX(0) scale(1)}}
 @keyframes logo-heartbeat{0%,100%{opacity:.105;transform:scale(1)}22%{opacity:.18;transform:scale(1.02)}40%{opacity:.125;transform:scale(1.005)}58%{opacity:.17;transform:scale(1.016)}76%{opacity:.11;transform:scale(1)}}
 @keyframes logo-spin{from{rotate:0deg}to{rotate:-360deg}}
-@media(max-width:900px){.hero-watermark{width:490px;right:-119px;top:-89px}}
-@media(max-width:650px){.hero-watermark{width:440px;right:-120px;top:-75px}}
+@media(max-width:900px){.hero-watermark{width:490px;right:-119px;top:-64px}}
+@media(max-width:650px){.hero-watermark{width:440px;right:-120px;top:-50px}}
 @media(prefers-reduced-motion:reduce){.hero-watermark{animation:none;opacity:.13;transform:none}}
 /* Entrance for title, subtitle and call-to-action, following the brand symbol. */
 .hero-copy>.eyebrow,.hero-copy>h1,.hero-copy>.lead,.hero-copy>p,.hero-copy>.actions{animation:hero-text-in 1.05s ease-out both}
