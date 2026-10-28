@@ -3,13 +3,13 @@
   const booking='https://pcmap.place.naver.com/place/21125158/ticket?bk_query=%ED%95%98%EB%82%A8%EC%99%80%EC%9D%B4%EC%A6%88%EB%A7%8C&entry=pll&from=map&fromPanelNum=2&timestamp=202610281248&locale=ko&svcName=map_pcv5&searchText=%ED%95%98%EB%82%A8%EC%99%80%EC%9D%B4%EC%A6%88%EB%A7%8C';
   const style=document.createElement('style');
   style.textContent=`
-  #wise-floating-banner{position:fixed;z-index:9999;top:15%;right:18px;width:clamp(135px,13vw,210px);filter:drop-shadow(0 9px 17px rgba(69,33,0,.18));animation:wiseBeat 3.2s ease-in-out infinite;transform-origin:50% 50%;}
-  #wise-floating-banner .wise-banner-image{display:block;width:100%;height:auto;border:0;border-radius:13px;}
-  #wise-floating-banner .wise-banner-link{display:block;cursor:pointer;border-radius:13px;overflow:hidden;}
+  #wise-floating-banner{position:fixed;z-index:9999;top:110px;right:18px;width:min(220px,calc((100dvh - 140px) * 0.3716));filter:drop-shadow(0 9px 17px rgba(69,33,0,.18));animation:wiseBeat 3.2s ease-in-out infinite;transform-origin:50% 50%;}
+  #wise-floating-banner .wise-banner-image{position:absolute;display:block;left:-58.677686%;top:0;width:159.669422%;max-width:none;height:auto;border:0;}
+  #wise-floating-banner .wise-banner-link{position:relative;display:block;aspect-ratio:605 / 1628;cursor:pointer;border-radius:20px;overflow:hidden;}
   #wise-floating-banner .wise-banner-close{position:absolute;right:0;top:0;width:18%;aspect-ratio:1;border:0;background:transparent;cursor:pointer;z-index:2;font-size:0;}
   #wise-floating-banner .wise-banner-close:focus-visible,#wise-floating-banner .wise-banner-link:focus-visible{outline:3px solid #1b2f8d;outline-offset:3px;}
   @keyframes wiseBeat{0%,78%,100%{transform:translateY(0) scale(1)}83%{transform:translateY(-5px) scale(1.035)}88%{transform:translateY(0) scale(1)}93%{transform:translateY(-3px) scale(1.02)}}
-  @media(max-width:768px){#wise-floating-banner{top:auto;bottom:14px;right:10px;width:min(30vw,135px);}}
+  @media(max-width:768px){#wise-floating-banner{top:auto;bottom:74px;right:10px;width:min(145px,calc((100dvh - 180px) * 0.3716));}}
   @media(prefers-reduced-motion:reduce){#wise-floating-banner{animation:none}}
   `;
   document.head.appendChild(style);
