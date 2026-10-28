@@ -1,6 +1,6 @@
 (()=>{
   if(document.getElementById('wise-floating-banner')) return;
-  const booking='https://pcmap.place.naver.com/place/21125158/ticket?bk_query=%ED%95%98%EB%82%A8%EC%99%80%EC%9D%B4%EC%A6%88%EB%A7%8C&entry=pll&from=map&fromPanelNum=2&timestamp=202610281248&locale=ko&svcName=map_pcv5&searchText=%ED%95%98%EB%82%A8%EC%99%80%EC%9D%B4%EC%A6%88%EB%A7%8C';
+  const booking='https://m.booking.naver.com/booking/13/bizes/881516/items/5642743?area=pll&lang=ko&service-target=map-pc&startDate=2026-10-28&theme=place';
   const style=document.createElement('style');
   style.textContent=`
   #wise-floating-banner{position:fixed;z-index:9999;top:110px;right:18px;width:min(220px,calc((100dvh - 140px) * 0.3716));filter:drop-shadow(0 9px 17px rgba(69,33,0,.18));animation:wiseBeat 3.2s ease-in-out infinite;transform-origin:50% 50%;}
