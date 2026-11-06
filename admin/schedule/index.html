@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="/schedule/schedule.css">
+  <title>시간표 관리 | 와이즈만영재교육 하남센터</title>
+  <script type="module" src="/admin/schedule/editor.js"></script>
+</head>
+<body>
+  <main>
+    <div class="hero"><div class="wrap">
+      <div class="eyebrow">와이즈만영재교육 하남센터</div>
+      <h1>시간표 관리</h1>
+      <p>수업을 입력하고 공개하면 학부모용 시간표에 반영됩니다.</p>
+    </div></div>
+    <section class="wrap schedule-main" aria-label="관리자 화면">
+      <p><a href="/schedule/">← 학부모용 시간표 보기</a></p>
+      <noscript><p>시간표 관리에는 JavaScript가 필요합니다.</p></noscript>
+      <form id="login" class="form-panel login" method="post" hidden>
+        <h2>관리자 로그인</h2>
+        <label>관리자 비밀번호
+          <input name="password" type="password" autocomplete="current-password" required maxlength="128">
+        </label>
+        <button class="button" type="submit">로그인</button>
+      </form>
+      <form id="setup" class="form-panel login" method="post" hidden>
+        <h2>새 비밀번호 설정</h2>
+        <label>최초 설정 코드
+          <input name="setupCode" type="password" autocomplete="off" required maxlength="128">
+        </label>
+        <label>새 비밀번호 (8자 이상)
+          <input name="newPassword" type="password" autocomplete="new-password" required minlength="8" maxlength="128">
+        </label>
+        <label>새 비밀번호 확인
+          <input name="confirmPassword" type="password" autocomplete="new-password" required maxlength="128">
+        </label>
+        <button class="button" type="submit">비밀번호 설정</button>
+        <button class="button secondary" id="back-to-login" type="button">로그인으로 돌아가기</button>
+      </form>
+      <form id="editor" class="form-panel" hidden>
+        <div class="toolbar">
+          <h2>공개 시간표 편집</h2>
+          <div>
+            <button id="import-november" class="button secondary" type="button">11월 시간표 불러오기</button>
+            <button id="reload" class="button secondary" type="button">공개본 다시 불러오기</button>
+            <button id="logout" class="button secondary" type="button">로그아웃</button>
+          </div>
+        </div>
+        <label>시간표 제목 <input name="scheduleTitle" placeholder="예: 11월 수업 시간표" maxlength="60"></label>
+        <p class="muted">수업 한 개마다 항목을 추가해 주세요. 같은 학년은 대상 학년을 같은 이름으로 입력하면 학년별 표에서 함께 표시됩니다.</p>
+        <div id="rows"></div>
+        <div class="toolbar">
+          <button id="add" class="button secondary" type="button">+ 수업 추가</button>
+          <button class="button" type="submit">시간표 공개</button>
+        </div>
+      </form>
+      <p id="status" class="status" role="status"></p>
+    </section>
+  </main>
+  <datalist id="schedule-subjects">
+    <option value="과학"><option value="수학">
+  </datalist>
+  <datalist id="schedule-grades">
+    <option value="7세"><option value="초등 1학년"><option value="초등 2학년"><option value="초등 3학년">
+    <option value="초등 4학년"><option value="초등 5학년"><option value="초등 6학년">
+    <option value="중등 1학년"><option value="중등 2학년"><option value="중등 3학년"><option value="특강">
+  </datalist>
+  <template id="row-template">
+    <fieldset class="form-row">
+      <legend>수업</legend>
+      <div class="fields">
+        <label>요일 <select name="day" required>
+          <option value="1">월요일</option><option value="2">화요일</option><option value="3">수요일</option>
+          <option value="4">목요일</option><option value="5">금요일</option><option value="6">토요일</option><option value="7">일요일</option>
+        </select></label>
+        <label>시작 시간 <input name="start" type="time" required></label>
+        <label>종료 시간 (선택) <input name="end" type="time"></label>
+        <label>과목 <input name="subject" list="schedule-subjects" placeholder="예: 과학" maxlength="60" required></label>
+        <label>대상 학년 <input name="grade" list="schedule-grades" placeholder="여러 학년은 쉼표로 구분" maxlength="60" required></label>
+        <label>프로그램·반 이름 <input name="name" placeholder="예: Ask Why C" maxlength="60" required></label>
+      </div>
+      <button class="button secondary remove" type="button">이 수업 삭제</button>
+    </fieldset>
+  </template>
+</body>
+</html>

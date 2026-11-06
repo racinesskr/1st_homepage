@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="와이즈만영재교육 하남센터의 요일별·학년별 수업 시간표를 확인하세요.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://hawhy.net/schedule/">
+  <link rel="stylesheet" href="/schedule/schedule.css">
+  <link rel="stylesheet" href="/schedule/navigation.css">
+  <title>시간표 | 와이즈만영재교육 하남센터</title>
+  <script src="/schedule/public.js" type="module"></script>
+</head>
+<body>
+  <header><div class="nav">
+    <a class="brand" href="/#home">와이즈만영재교육<br><span>하남센터</span></a>
+    <nav aria-label="주 메뉴">
+      <a href="/#about">교육철학</a><a href="/#programs">교육과정</a><a href="/#stories">수업 이야기</a>
+      <a href="/#news">센터 소식</a><a href="/schedule/" aria-current="page">시간표</a>
+      <a href="/tuition/">교습비</a><a href="/#faq">자주 묻는 질문</a><a class="button" href="/#contact">상담 안내 ↗</a>
+    </nav>
+  </div></header>
+  <main>
+    <div class="hero"><div class="wrap">
+      <div class="eyebrow">CLASS SCHEDULE</div>
+      <h1>수업 시간표</h1>
+      <p>요일이나 학년을 기준으로 과학·수학 수업을 찾아보세요.</p>
+    </div></div>
+    <section class="wrap schedule-main" aria-labelledby="schedule-heading">
+      <div class="toolbar"><h2 id="schedule-heading">수업 시간표 보기</h2><span id="updated" class="muted"></span></div>
+      <div id="schedule-views" class="schedule-views" role="group" aria-label="시간표 보기 방식" hidden>
+        <button type="button" class="button secondary" data-schedule-view="day" aria-pressed="true" aria-controls="schedule-by-day">요일별</button>
+        <button type="button" class="button secondary" data-schedule-view="grade" aria-pressed="false" aria-controls="schedule-by-grade">학년별</button>
+      </div>
+      <label id="schedule-filter" class="schedule-filter" hidden>대상 학년
+        <select id="schedule-grade"><option value="">전체 학년</option></select>
+      </label>
+      <p id="schedule-status" class="status" role="status">시간표를 불러오는 중입니다.</p>
+      <noscript><p>시간표를 보려면 브라우저에서 JavaScript를 켜 주세요.</p></noscript>
+      <div id="schedule-by-day" class="table-scroll" role="region" aria-label="요일별 시간표" tabindex="0" hidden>
+        <table>
+          <caption>주간 수업 시간표</caption>
+          <thead><tr><th scope="col">시작 시간</th><th scope="col">월요일</th><th scope="col">화요일</th><th scope="col">수요일</th><th scope="col">목요일</th><th scope="col">금요일</th><th scope="col">토요일</th><th scope="col">일요일</th></tr></thead>
+          <tbody id="schedule-rows"></tbody>
+        </table>
+      </div>
+      <div id="schedule-by-grade" class="table-scroll" role="region" aria-label="학년별 시간표" tabindex="0" hidden>
+        <table class="grade-table">
+          <caption>학년별 수업 시간표</caption>
+          <thead><tr><th scope="col">대상 학년</th><th scope="col">과학</th><th scope="col">수학</th><th scope="col" id="grade-other" hidden>기타</th></tr></thead>
+          <tbody id="grade-rows"></tbody>
+        </table>
+      </div>
+      <div class="contact"><p>현재 개설 여부와 자리 안내는 센터에 문의해 주세요.</p><a class="button" href="/#contact">상담 안내</a></div>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="wrap">와이즈만영재교육 하남센터 · 경기도 하남시 덕풍동로 111-21</div></footer>
+</body>
+</html>

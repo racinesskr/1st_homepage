@@ -1,0 +1,70 @@
+:root{
+  --red:#b51632;--dark:#871029;--ink:#252229;--cream:#faf7f2;--muted:#675d65;--line:#e5d9d3;
+  --grade-pink:#ffcdff;--grade-yellow:#ffff01;--grade-orange:#ffc000;--grade-green:#cdffcc;
+  --grade-sky:#8fb3e3;--grade-light-sky:#b7ddea;--grade-purple:#b2a2c7;--grade-ivory:#ded9c3;--grade-neutral:#f6eee9;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:Pretendard,'Noto Sans KR',Arial,sans-serif;line-height:1.7}
+a{color:inherit;text-decoration:none}
+button,input,select{font:inherit}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:3px solid #a16b10;outline-offset:3px}
+[hidden]{display:none!important}
+.hero{background:var(--red);color:white}
+.wrap{max-width:1160px;margin:auto;padding-inline:28px}
+.hero .wrap{padding-block:48px 54px}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.2em}
+h1{font-size:clamp(34px,5vw,48px);letter-spacing:-.06em;margin:6px 0}
+.hero p{margin:0;color:#fff0f3}
+.schedule-main{padding-block:36px 54px}
+h2{font-size:clamp(23px,4vw,29px);margin:0 0 8px;letter-spacing:-.04em}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.muted{color:var(--muted);font-size:14px}
+.table-scroll{overflow:auto;background:white;border:1px solid var(--line);border-radius:8px}
+table{width:100%;border-collapse:collapse;min-width:720px;table-layout:fixed}
+caption{text-align:left;padding:10px 16px;font-size:14px;font-weight:700}
+th,td{padding:10px 8px;text-align:left;vertical-align:top;border:1px solid var(--line);overflow-wrap:anywhere}
+thead th{background:#f7e8ec;color:#871029}
+tr>:first-child{position:sticky;left:0;width:86px;background:#f6eee9;font-size:13px}
+.class-entry,.program-entry{background:var(--grade-fill,var(--grade-neutral));color:var(--ink);border-radius:4px}
+.class-entry{margin:0;padding:4px 6px;font-size:13px;line-height:1.4}
+.class-entry+.class-entry{margin-top:4px}
+.class-entry small{display:block;font-size:12px}
+.class-entry:has(.compact-cni-name){padding-inline:2px}
+.compact-cni-name{white-space:nowrap}
+.compact-cni-name .compact-cni-detail{font-size:9px}
+.schedule-views{display:flex;gap:8px;margin-top:12px}
+.schedule-views button[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:white}
+.schedule-filter{display:flex;align-items:center;gap:10px;margin-top:12px;font-weight:700;font-size:14px}
+.schedule-filter select{width:auto;max-width:75%}
+.grade-table{min-width:480px}
+.grade-table th[scope="row"]{background:var(--grade-fill,var(--grade-neutral));color:var(--ink)}
+.grade-table th,.grade-table td{padding:8px}
+.grade-table .program-entry{margin:0;padding:5px 8px;line-height:1.45}
+.grade-table .program-entry+.program-entry{margin-top:5px}
+.program-entry small,.program-entry .program-slot{font-size:13px}
+.program-entry .program-slot{display:flex;flex-wrap:wrap;gap:0 8px}
+.program-slot b{min-width:4em;color:var(--ink)}
+.program-times{font-variant-numeric:tabular-nums}
+.contact{margin-top:34px;border-top:1px solid var(--line);padding-top:18px}
+.button{display:inline-flex;align-items:center;justify-content:center;padding:9px 16px;border:1px solid transparent;border-radius:4px;background:var(--red);color:white;font-weight:700;cursor:pointer}
+.button:hover{background:var(--dark)}
+.secondary{background:white;color:var(--dark);border-color:#d8b5bf}
+.secondary:hover{background:#f9edf0}
+button:disabled{opacity:.65;cursor:wait}
+.form-panel{padding:20px;background:white;border:1px solid var(--line);border-radius:8px}
+.form-panel label{display:grid;gap:4px;font-size:14px;font-weight:700}
+input,select{width:100%;min-width:0;border:1px solid #bdaeb4;border-radius:4px;padding:7px 8px;background:white;color:var(--ink)}
+.login{max-width:460px}
+.login button{margin-top:14px}
+.form-row{margin:12px 0;border:1px solid var(--line);border-radius:6px;padding:12px;min-width:0}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.remove{margin-top:10px}
+.status{min-height:1.7em}
+.status[data-error]{color:var(--dark);font-weight:700}
+.site-footer{background:#eee7df;color:#61565e;padding-block:22px;font-size:13px}
+@media(max-width:650px){
+  .wrap{padding-inline:18px}
+  .hero .wrap{padding-block:36px}
+  .schedule-main{padding-block:24px 36px}
+  .fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
