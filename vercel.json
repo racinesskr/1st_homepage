@@ -2,5 +2,12 @@
   "version": 2,
   "framework": null,
   "buildCommand": "",
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "redirects": [
+    {
+      "source": "/admin/reviews",
+      "destination": "https://wise-review-hanam.vercel.app/admin/",
+      "permanent": false
+    }
+  ]
 }
