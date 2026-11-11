@@ -61,7 +61,6 @@ input,select{width:100%;min-width:0;border:1px solid #bdaeb4;border-radius:4px;p
 .remove{margin-top:10px}
 .status{min-height:1.7em}
 .status[data-error]{color:var(--dark);font-weight:700}
-.site-footer{background:#eee7df;color:#61565e;padding-block:22px;font-size:13px}
 @media(max-width:650px){
   .wrap{padding-inline:18px}
   .hero .wrap{padding-block:36px}
