@@ -7,8 +7,23 @@
   <link rel="stylesheet" href="/schedule/schedule.css">
   <title>시간표 관리 | 와이즈만영재교육 하남센터</title>
   <script type="module" src="/admin/schedule/editor.js"></script>
+  <style>
+    body.schedule-admin {
+      --red: #22456c;
+      --dark: #172b46;
+      --ink: #172b46;
+      --cream: #f3f6fa;
+      --muted: #526781;
+      --line: #dce7f5;
+    }
+    .schedule-admin .hero .wrap { padding-block: 22px 24px; }
+    .schedule-admin .hero p { color: #e4edf8; }
+    .schedule-admin .secondary { border-color: #cbd9ea; }
+    .schedule-admin .secondary:hover { background: #eef4fb; }
+    .schedule-admin :focus-visible { outline-color: #326ca3; }
+  </style>
 </head>
-<body>
+<body class="schedule-admin">
   <main>
     <div class="hero"><div class="wrap">
       <div class="eyebrow">와이즈만영재교육 하남센터</div>
@@ -16,7 +31,7 @@
       <p>수업을 입력하고 공개하면 학부모용 시간표에 반영됩니다.</p>
     </div></div>
     <section class="wrap schedule-main" aria-label="관리자 화면">
-      <p><a href="/schedule/">← 학부모용 시간표 보기</a></p>
+      <p><a href="/schedule/" target="_blank" rel="noopener">← 학부모용 시간표 보기</a></p>
       <noscript><p>시간표 관리에는 JavaScript가 필요합니다.</p></noscript>
       <form id="login" class="form-panel login" method="post" hidden>
         <h2>관리자 로그인</h2>
