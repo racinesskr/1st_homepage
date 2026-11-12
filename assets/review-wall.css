@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Gaegu:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cute+Font&family=Gaegu:wght@700&family=Gamja+Flower&family=Hi+Melody&family=Nanum+Brush+Script&family=Nanum+Pen+Script&family=Poor+Story&family=Single+Day&display=swap");
 
 .review-wall {
   padding: 0;
@@ -24,16 +24,15 @@
 .review-notes li {
   position: relative;
   display: grid;
-  align-content: center;
+  grid-template-rows: auto 1fr auto;
+  gap: 8px;
   min-height: 132px;
   padding: 22px 16px 18px;
   background: #fff2ae;
   color: #343037;
   box-shadow: 2px 6px 10px #3d292a26, inset 0 -1px #0000000b;
-  font: 700 clamp(20px, 2.2vw, 27px)/1.3 Gaegu, "Noto Sans KR", sans-serif;
+  font: clamp(21px, 2.2vw, 28px)/1.25 var(--note-font, Gaegu), "Noto Sans KR", sans-serif;
   text-align: center;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
   transform: rotate(-1.4deg);
 }
 
@@ -56,4 +55,35 @@
 @media (max-width: 650px) {
   .review-notes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
   .review-notes li { min-height: 112px; padding: 17px 12px 13px; }
+}
+
+.review-notes li:nth-child(1) { --note-font: "Gaegu"; }
+.review-notes li:nth-child(2) { --note-font: "Gamja Flower"; }
+.review-notes li:nth-child(3) { --note-font: "Hi Melody"; }
+.review-notes li:nth-child(4) { --note-font: "Nanum Pen Script"; }
+.review-notes li:nth-child(5) { --note-font: "Nanum Brush Script"; }
+.review-notes li:nth-child(6) { --note-font: "Single Day"; }
+.review-notes li:nth-child(7) { --note-font: "Poor Story"; }
+.review-notes li:nth-child(8) { --note-font: "Cute Font"; }
+
+.review-note-rating {
+  color: #75410c;
+  font: 14px/1.2 system-ui, sans-serif;
+  letter-spacing: 1px;
+}
+
+.review-note-quote {
+  align-self: center;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.review-note-signature {
+  justify-self: end;
+  color: #514151;
+  font-size: .83em;
+  text-align: right;
 }
