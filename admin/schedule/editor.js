@@ -7,7 +7,31 @@ const rows = document.querySelector('#rows');
 const status = document.querySelector('#status');
 const add = document.querySelector('#add');
 const fields = ['day', 'start', 'end', 'subject', 'grade', 'name'];
+const monicaOrigin = 'https://admin.hawhy.net';
+const embedded = window.parent !== window && new URLSearchParams(location.search).get('monica') === '1';
 let token;
+
+function getMonicaToken() {
+  return new Promise((resolve, reject) => {
+    const id = crypto.randomUUID();
+    const timeout = setTimeout(() => {
+      window.removeEventListener('message', receive);
+      reject(new Error('모니카 원장 계정 로그인을 확인해 주세요.'));
+    }, 8000);
+
+    function receive(event) {
+      if (event.origin !== monicaOrigin || event.source !== window.parent ||
+          event.data?.type !== 'monica-schedule-session' || event.data.id !== id) return;
+      clearTimeout(timeout);
+      window.removeEventListener('message', receive);
+      if (typeof event.data.token === 'string' && event.data.token) resolve(event.data.token);
+      else reject(new Error('모니카 원장 계정 로그인을 확인해 주세요.'));
+    }
+
+    window.addEventListener('message', receive);
+    window.parent.postMessage({ type: 'monica-schedule-session-request', id }, monicaOrigin);
+  });
+}
 let version;
 let dirty = false;
 
@@ -19,13 +43,14 @@ function report(message, error = false) {
 async function request(method, body, query = '') {
   const headers = {};
   if (body) headers['Content-Type'] = 'application/json';
-  if (token) headers.Authorization = 'Bearer ' + token;
+  const accessToken = embedded ? await getMonicaToken() : token;
+  if (accessToken) headers.Authorization = 'Bearer ' + accessToken;
   const response = await fetch('/api/schedule' + query, {
     method, headers, body: body ? JSON.stringify(body) : undefined, cache: 'no-store'
   });
   const data = await response.json();
   if (!response.ok) {
-    if (response.status === 401 && token) {
+    if (!embedded && response.status === 401 && token) {
       token = undefined;
       login.hidden = false;
       login.elements.password.focus();
@@ -173,4 +198,13 @@ window.addEventListener('beforeunload', event => {
     event.returnValue = true;
   }
 });
-login.hidden = false;
+if (embedded) {
+  document.querySelector('#logout').hidden = true;
+  report('모니카 로그인 확인 중…');
+  request('GET', undefined, '?edit').then(data => {
+    show(data);
+    report('');
+  }).catch(error => report(error.message, true));
+} else {
+  login.hidden = false;
+}
