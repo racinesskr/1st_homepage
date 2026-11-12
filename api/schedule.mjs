@@ -102,6 +102,23 @@ async function requestJson(request, limit) {
   }
 }
 
+async function monicaDirector(authorization) {
+  const host = 'https://xnaxdqkfngmzciwdawvx.supabase.co';
+  const headers = { authorization, apikey: 'sb_publishable_DHMjXRpOXJ4C2DaCa8vHpA_H0yWZZf2' };
+  const user = await fetch(host + '/auth/v1/user', { headers, signal: AbortSignal.timeout(6000) });
+  if (user.status === 401 || user.status === 403) return false;
+  if (!user.ok) throw new Error('Monica identity service unavailable');
+  const { id } = await user.json();
+  if (!id) return false;
+  const query = new URLSearchParams({ select: 'active,role', user_id: 'eq.' + id, limit: '1' });
+  const response = await fetch(host + '/rest/v1/hanam_staff?' + query, {
+    headers, signal: AbortSignal.timeout(6000)
+  });
+  if (!response.ok) throw new Error('Monica staff service unavailable');
+  const [staff] = await response.json();
+  return staff?.active === true && staff.role === 'director';
+}
+
 async function handler(request) {
   const secret = process.env.SCHEDULE_ADMIN_SETUP_CODE ?? process.env.SCHEDULE_ADMIN_PASSWORD;
   const url = new URL(request.url);
@@ -111,16 +128,27 @@ async function handler(request) {
       return json({ rows, title, updatedAt });
     }
 
-    if (!secret || !/^[A-Za-z0-9_-]{32,}$/.test(secret)) {
-      return json({ error: '관리자 설정이 필요합니다.' }, 503);
+    if (request.method !== 'GET' && request.method !== 'POST' && request.method !== 'PUT') {
+      return json({ error: '지원하지 않는 요청입니다.' }, 405);
     }
-    if (request.method === 'POST' || request.method === 'PUT') {
-      if (request.headers.get('origin') !== url.origin) return json({ error: '허용되지 않은 요청입니다.' }, 403);
+    if (request.method !== 'GET' && request.headers.get('origin') !== url.origin) {
+      return json({ error: '허용되지 않은 요청입니다.' }, 403);
     }
-    const credentials = await readCredentials();
-    if (request.method === 'POST') return await login(request, secret, credentials);
-    if (!credentials || !validSession(request, secret + credentials.passwordHash)) {
-      return json({ error: '관리자 로그인이 필요합니다.' }, 401);
+
+    const authorization = request.headers.get('authorization') ?? '';
+    if (request.method !== 'POST' && /^Bearer eyJ[\w-]+\.[\w-]+\.[\w-]+$/.test(authorization)) {
+      if (!await monicaDirector(authorization)) {
+        return json({ error: '시간표 관리는 활성 원장 계정만 이용할 수 있습니다.' }, 403);
+      }
+    } else {
+      if (!secret || !/^[A-Za-z0-9_-]{32,}$/.test(secret)) {
+        return json({ error: '관리자 설정이 필요합니다.' }, 503);
+      }
+      const credentials = await readCredentials();
+      if (request.method === 'POST') return await login(request, secret, credentials);
+      if (!credentials || !validSession(request, secret + credentials.passwordHash)) {
+        return json({ error: '관리자 로그인이 필요합니다.' }, 401);
+      }
     }
     if (request.method === 'GET') return json(await readSchedule());
     if (request.method !== 'PUT') return json({ error: '지원하지 않는 요청입니다.' }, 405);
