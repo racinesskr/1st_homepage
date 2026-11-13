@@ -1,6 +1,6 @@
 import { createHash, createHmac, randomBytes, scrypt, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
-import { BlobPreconditionFailedError, get, put } from '@vercel/blob';
+import { BlobPreconditionFailedError, get, head, put } from '@vercel/blob';
 import { novemberRows, novemberTitle } from '../schedule/november-reference.js';
 
 const pathname = 'schedule/weekly.json';
@@ -68,8 +68,12 @@ async function login(request, setupCode, credentials) {
 async function readSchedule() {
   const blob = await get(pathname, { access: 'private', useCache: false });
   if (!blob) return { rows: novemberRows, title: novemberTitle, updatedAt: null, version: null };
-  const data = await new Response(blob.stream).json();
-  return { rows: data.rows, title: data.title ?? '', updatedAt: data.updatedAt, version: blob.blob.etag };
+  const metadata = await head(blob.blob.url);
+  const verified = await get(pathname, { access: 'private', useCache: false });
+  if (!verified || blob.blob.etag !== verified.blob.etag) throw new BlobPreconditionFailedError();
+  await blob.stream.cancel();
+  const data = await new Response(verified.stream).json();
+  return { rows: data.rows, title: data.title ?? '', updatedAt: data.updatedAt, version: metadata.etag };
 }
 
 function cleanRows(rows) {
