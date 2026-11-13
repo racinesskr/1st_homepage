@@ -1,4 +1,4 @@
-export const novemberTitle = '11월 수업 시간표';
+export const novemberTitle = '2026년 11월 수업 시간표';
 
 // One program per row. Each slot lists the original weekdays and starting times.
 const programs = [

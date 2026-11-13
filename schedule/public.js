@@ -259,7 +259,7 @@ function createScheduleView(root) {
 
   return ({ rows, title, updatedAt }) => {
     scheduleRows = rows;
-    heading.textContent = title || '수업 시간표 보기';
+    heading.textContent = title === '11월 수업 시간표' ? '2026년 11월 수업 시간표' : title || '수업 시간표 보기';
     const previousGrade = gradeSelect.value;
     const grades = [...new Set(rows.flatMap(row => gradeLabels(row.grade)))].sort(compareGrades);
     gradeSelect.options.length = 1;
