@@ -73,6 +73,7 @@ input,select{width:100%;min-width:0;border:1px solid #bdaeb4;border-radius:4px;p
   align-items: flex-start;
   gap: 16px;
 }
+.day-tables caption { text-align: center; }
 .weekday-schedule { flex: 1 1 0; min-width: 0; }
 .weekday-schedule table { min-width: 640px; }
 .saturday-schedule { flex: 0 0 244px; }
