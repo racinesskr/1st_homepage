@@ -1,6 +1,6 @@
 import { createHash, createHmac, randomBytes, scrypt, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
-import { BlobPreconditionFailedError, get, put } from '@vercel/blob';
+import { BlobNotFoundError, BlobPreconditionFailedError, get, head, put } from '@vercel/blob';
 import { novemberRows, novemberTitle } from '../schedule/november-reference.js';
 
 const pathname = 'schedule/weekly-current.json';
@@ -66,12 +66,32 @@ async function login(request, setupCode, credentials) {
   return json({ token: `${payload}.${sign(payload, setupCode + credentials.passwordHash)}` });
 }
 
-async function readSchedule() {
+async function scheduleMetadata() {
+  try {
+    return await head(pathname);
+  } catch (error) {
+    if (error instanceof BlobNotFoundError) return null;
+    throw error;
+  }
+}
+
+async function readSchedule(forWrite = false) {
+  // The download ETag can differ from the Blob API's conditional-write ETag.
+  const metadata = forWrite ? await scheduleMetadata() : null;
   const current = await get(pathname, { access: 'private', useCache: false });
   const blob = current ?? await get(previousPathname, { access: 'private', useCache: false });
   if (!blob) return { rows: novemberRows, title: novemberTitle, updatedAt: null, version: null };
-  const data = await new Response(blob.stream).json();
-  return { rows: data.rows, title: data.title ?? '', updatedAt: data.updatedAt, version: current?.blob.etag ?? null };
+  const body = await new Response(blob.stream).text();
+  const data = JSON.parse(body);
+  if (forWrite) {
+    const latest = await scheduleMetadata();
+    if (metadata?.etag !== latest?.etag || Boolean(current) !== Boolean(latest)) {
+      throw new BlobPreconditionFailedError();
+    }
+    if (latest && !latest.etag) throw new Error('Schedule Blob metadata has no write ETag');
+  }
+  return { rows: data.rows, title: data.title ?? '', updatedAt: data.updatedAt,
+    version: hash(body).toString('hex'), writeEtag: metadata?.etag };
 }
 
 function cleanRows(rows) {
@@ -154,7 +174,10 @@ async function handler(request) {
         return json({ error: '관리자 로그인이 필요합니다.' }, 401);
       }
     }
-    if (request.method === 'GET') return json(await readSchedule());
+    if (request.method === 'GET') {
+      const { rows, title, updatedAt, version } = await readSchedule();
+      return json({ rows, title, updatedAt, version });
+    }
     if (request.method !== 'PUT') return json({ error: '지원하지 않는 요청입니다.' }, 405);
 
     const data = await requestJson(request, 100_000);
@@ -164,20 +187,21 @@ async function handler(request) {
         (data.version !== null && typeof data.version !== 'string')) {
       return json({ error: '입력 내용을 확인해 주세요. 종료 시간은 시작 시간 이후여야 합니다.' }, 400);
     }
-    const current = await readSchedule();
+    const current = await readSchedule(true);
     if (data.version !== current.version) {
       return json({ error: '다른 곳에서 먼저 공개했습니다. 현재 공개본을 다시 불러와 주세요.' }, 409);
     }
     const updatedAt = new Date().toISOString();
     const schedule = { rows, title: title.trim(), updatedAt };
-    const saved = await put(pathname, JSON.stringify(schedule), {
+    const body = JSON.stringify(schedule);
+    await put(pathname, body, {
       access: 'private',
       contentType: 'application/json',
       addRandomSuffix: false,
-      allowOverwrite: current.version !== null,
-      ...(current.version ? { ifMatch: current.version } : {})
+      allowOverwrite: Boolean(current.writeEtag),
+      ...(current.writeEtag ? { ifMatch: current.writeEtag } : {})
     });
-    return json({ ...schedule, version: saved.etag });
+    return json({ ...schedule, version: hash(body).toString('hex') });
   } catch (error) {
     if (error instanceof BlobPreconditionFailedError || /already exists/i.test(error?.message ?? '')) {
       return json({ error: '다른 곳에서 먼저 공개했습니다. 현재 공개본을 다시 불러와 주세요.' }, 409);
