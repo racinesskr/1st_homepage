@@ -92,7 +92,32 @@ input,select{width:100%;min-width:0;border:1px solid #bdaeb4;border-radius:4px;p
   .saturday-schedule { flex: auto; }
 }
 
-.schedule-hero .wrap { padding-block: 30px 34px; }
+.schedule-hero .wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px 22px;
+  padding-block: 16px;
+}
+.schedule-hero .eyebrow,
+.schedule-hero h1 { flex-shrink: 0; }
+.schedule-hero h1 {
+  margin: 0;
+  font-size: clamp(26px, 3.5vw, 40px);
+  line-height: 1.2;
+}
+.schedule-hero p {
+  min-width: 0;
+  line-height: 1.5;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 650px) {
-  .schedule-hero .wrap { padding-block: 22px; }
+  .schedule-hero .wrap {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding-block: 12px;
+  }
+  .schedule-hero p { font-size: 14px; }
 }
