@@ -67,3 +67,19 @@ input,select{width:100%;min-width:0;border:1px solid #bdaeb4;border-radius:4px;p
   .schedule-main{padding-block:24px 36px}
   .fields{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+.day-tables {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+.weekday-schedule { flex: 1 1 0; min-width: 0; }
+.weekday-schedule table { min-width: 640px; }
+.saturday-schedule { flex: 0 0 244px; }
+.saturday-schedule table { min-width: 0; }
+.saturday-schedule tr > :first-child { width: 70px; }
+
+@media (max-width: 900px) {
+  .day-tables { flex-direction: column; align-items: stretch; }
+  .saturday-schedule { flex: auto; }
+}

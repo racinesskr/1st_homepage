@@ -84,12 +84,14 @@ function groupCurriculumMath(classes) {
   return entries;
 }
 
-function renderByDay(rows, table) {
+function renderByDay(rows, table, firstDay, lastDay) {
+  table.replaceChildren();
   const slots = new Map();
   for (const row of rows) {
+    if (row.day < firstDay || row.day > lastDay) continue;
     const time = row.start;
-    if (!slots.has(time)) slots.set(time, Array.from({ length: 7 }, () => []));
-    slots.get(time)[row.day - 1].push(row);
+    if (!slots.has(time)) slots.set(time, Array.from({ length: lastDay - firstDay + 1 }, () => []));
+    slots.get(time)[row.day - firstDay].push(row);
   }
   for (const [time, days] of [...slots].sort(([a], [b]) => a.localeCompare(b))) {
     const line = table.insertRow();
@@ -207,6 +209,9 @@ function createScheduleView(root) {
   const gradeSelect = root.querySelector('#schedule-grade');
   const updated = root.querySelector('#updated');
   const dayRows = root.querySelector('#schedule-rows');
+  const saturdayRows = root.querySelector('#saturday-rows');
+  const weekdaySchedule = root.querySelector('#weekday-schedule');
+  const saturdaySchedule = root.querySelector('#saturday-schedule');
   const gradeRows = root.querySelector('#grade-rows');
   const otherHeading = root.querySelector('#grade-other');
   const date = new Intl.DateTimeFormat('ko-KR', { dateStyle: 'medium', timeZone: 'Asia/Seoul' });
@@ -217,9 +222,9 @@ function createScheduleView(root) {
     subjectFilter.hidden = views.hidden || selected !== 'day';
     gradeFilter.hidden = views.hidden || selected !== 'grade';
     for (const [view, panel] of panels) panel.hidden = views.hidden || view !== selected;
-    const emptyDay = selected === 'day' && subjectSelect.value && !dayRows.rows.length;
+    const emptyDay = selected === 'day' && !dayRows.rows.length && !saturdayRows.rows.length;
     status.textContent = views.hidden ? '공개된 시간표가 아직 없습니다. 수업 시간은 센터로 문의해 주세요.' :
-      emptyDay ? '선택한 과목의 수업이 없습니다.' : '휴대폰에서는 표를 좌우로 밀어 볼 수 있습니다.';
+      emptyDay ? (subjectSelect.value ? '선택한 과목의 월~토 수업이 없습니다.' : '공개된 월~토 수업이 없습니다.') : '휴대폰에서는 표를 좌우로 밀어 볼 수 있습니다.';
     for (const button of buttons) button.setAttribute('aria-pressed', String(button.dataset.scheduleView === selected));
   }
 
@@ -231,10 +236,12 @@ function createScheduleView(root) {
   }
 
   function renderDayTable() {
-    dayRows.replaceChildren();
     const subject = subjectSelect.value;
     const visible = subject ? scheduleRows.filter(row => subjectColumn(row.subject) === subject) : scheduleRows;
-    renderByDay(visible, dayRows);
+    renderByDay(visible, dayRows, 1, 5);
+    renderByDay(visible, saturdayRows, 6, 6);
+    weekdaySchedule.hidden = !dayRows.rows.length;
+    saturdaySchedule.hidden = !saturdayRows.rows.length;
   }
 
   function renderGradeTable() {
@@ -261,7 +268,7 @@ function createScheduleView(root) {
     views.hidden = !rows.length;
     const previousSubject = subjectSelect.value;
     const subjects = ['과학', '수학'];
-    if (rows.some(row => subjectColumn(row.subject) === '기타')) subjects.push('기타');
+    if (rows.some(row => row.day <= 6 && subjectColumn(row.subject) === '기타')) subjects.push('기타');
     subjectSelect.options.length = 1;
     for (const subject of subjects) subjectSelect.add(new Option(subject, subject));
     subjectSelect.value = subjects.includes(previousSubject) ? previousSubject : '';
