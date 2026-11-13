@@ -38,12 +38,17 @@ tr>:first-child{position:sticky;left:0;width:86px;background:#f6eee9;font-size:1
 .schedule-filter select{width:auto;max-width:75%}
 .grade-table{min-width:480px}
 .grade-table th[scope="row"]{background:var(--grade-fill,var(--grade-neutral));color:var(--ink)}
-.grade-table th,.grade-table td{padding:8px}
+.grade-table caption,
+.grade-table th,
+.grade-table td { text-align: center; }
+.grade-table th,
+.grade-table td { padding: 8px; }
+.grade-table th[scope="row"] { vertical-align: middle; }
 .grade-table .program-entry{margin:0;padding:5px 8px;line-height:1.45}
 .grade-table .program-entry+.program-entry{margin-top:5px}
 .program-entry small,.program-entry .program-slot{font-size:13px}
-.program-entry .program-slot{display:flex;flex-wrap:wrap;gap:0 8px}
-.program-slot b{min-width:4em;color:var(--ink)}
+.program-entry .program-slot{display:flex;flex-wrap:wrap;justify-content:center;gap:0 8px}
+.program-slot b{color:var(--ink)}
 .program-times{font-variant-numeric:tabular-nums}
 .contact{margin-top:34px;border-top:1px solid var(--line);padding-top:18px}
 .button{display:inline-flex;align-items:center;justify-content:center;padding:9px 16px;border:1px solid transparent;border-radius:4px;background:var(--red);color:white;font-weight:700;cursor:pointer}
