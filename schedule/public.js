@@ -57,7 +57,7 @@ function programName(label) {
   return name;
 }
 
-function renderByDay(rows, table, selectedGrade) {
+function renderByDay(rows, table) {
   const slots = new Map();
   for (const row of rows) {
     const time = row.start;
@@ -73,7 +73,7 @@ function renderByDay(rows, table, selectedGrade) {
         const entry = document.createElement('p');
         entry.className = 'class-entry';
         entry.title = row.subject;
-        colorEntry(entry, selectedGrade || row.grade, row.name);
+        colorEntry(entry, row.grade, row.name);
         const name = programName(row.name);
         const detail = document.createElement('small');
         const grades = gradeLabels(row.grade).map(shortGrade).join('·');
@@ -174,7 +174,9 @@ function createScheduleView(root) {
   ]));
   const status = root.querySelector('#schedule-status');
   const heading = root.querySelector('#schedule-heading');
-  const filter = root.querySelector('#schedule-filter');
+  const gradeFilter = root.querySelector('#schedule-filter');
+  const subjectFilter = root.querySelector('#schedule-subject-filter');
+  const subjectSelect = root.querySelector('#schedule-subject');
   const gradeSelect = root.querySelector('#schedule-grade');
   const updated = root.querySelector('#updated');
   const dayRows = root.querySelector('#schedule-rows');
@@ -185,7 +187,12 @@ function createScheduleView(root) {
   let scheduleRows = [];
 
   function showSelected() {
+    subjectFilter.hidden = views.hidden || selected !== 'day';
+    gradeFilter.hidden = views.hidden || selected !== 'grade';
     for (const [view, panel] of panels) panel.hidden = views.hidden || view !== selected;
+    const emptyDay = selected === 'day' && subjectSelect.value && !dayRows.rows.length;
+    status.textContent = views.hidden ? '공개된 시간표가 아직 없습니다. 수업 시간은 센터로 문의해 주세요.' :
+      emptyDay ? '선택한 과목의 수업이 없습니다.' : '휴대폰에서는 표를 좌우로 밀어 볼 수 있습니다.';
     for (const button of buttons) button.setAttribute('aria-pressed', String(button.dataset.scheduleView === selected));
   }
 
@@ -196,16 +203,25 @@ function createScheduleView(root) {
     });
   }
 
-  function renderTables() {
+  function renderDayTable() {
     dayRows.replaceChildren();
+    const subject = subjectSelect.value;
+    const visible = subject ? scheduleRows.filter(row => subjectColumn(row.subject) === subject) : scheduleRows;
+    renderByDay(visible, dayRows);
+  }
+
+  function renderGradeTable() {
     gradeRows.replaceChildren();
     const grade = gradeSelect.value;
     const visible = grade ? scheduleRows.filter(row => gradeLabels(row.grade).includes(grade)) : scheduleRows;
-    renderByDay(visible, dayRows, grade);
     renderByGrade(grade ? visible.map(row => ({ ...row, grade })) : visible, gradeRows, otherHeading);
   }
 
-  gradeSelect.addEventListener('change', renderTables);
+  subjectSelect.addEventListener('change', () => {
+    renderDayTable();
+    showSelected();
+  });
+  gradeSelect.addEventListener('change', renderGradeTable);
 
   return ({ rows, title, updatedAt }) => {
     scheduleRows = rows;
@@ -216,11 +232,15 @@ function createScheduleView(root) {
     for (const grade of grades) gradeSelect.add(new Option(shortGrade(grade), grade));
     gradeSelect.value = grades.includes(previousGrade) ? previousGrade : '';
     views.hidden = !rows.length;
-    filter.hidden = !rows.length;
-    renderTables();
+    const previousSubject = subjectSelect.value;
+    const subjects = ['과학', '수학'];
+    if (rows.some(row => subjectColumn(row.subject) === '기타')) subjects.push('기타');
+    subjectSelect.options.length = 1;
+    for (const subject of subjects) subjectSelect.add(new Option(subject, subject));
+    subjectSelect.value = subjects.includes(previousSubject) ? previousSubject : '';
+    renderDayTable();
+    renderGradeTable();
     updated.textContent = updatedAt ? `업데이트 ${date.format(new Date(updatedAt))}` : '';
-    status.textContent = rows.length ? '휴대폰에서는 표를 좌우로 밀어 볼 수 있습니다.' :
-      '공개된 시간표가 아직 없습니다. 수업 시간은 센터로 문의해 주세요.';
     showSelected();
   };
 }
