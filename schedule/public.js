@@ -77,7 +77,7 @@ function renderByDay(rows, table) {
         const name = programName(row.name);
         const detail = document.createElement('small');
         const grades = gradeLabels(row.grade).map(shortGrade).join('·');
-        detail.textContent = [row.subject, grades, row.teacher, row.end ? `${row.end}까지` : ''].filter(Boolean).join(' · ');
+        detail.textContent = [row.subject, grades, row.end ? `${row.end}까지` : ''].filter(Boolean).join(' · ');
         entry.append(name, detail);
         cell.append(entry);
       }
@@ -113,7 +113,7 @@ function renderPrograms(cell, rows, subject, grade) {
     if (!programs.has(key)) programs.set(key, { name: row.name, subject: row.subject, slots: new Map() });
     const { slots } = programs.get(key);
     if (!slots.has(row.day)) slots.set(row.day, new Set());
-    slots.get(row.day).add([timeLabel(row), row.teacher].filter(Boolean).join(' · '));
+    slots.get(row.day).add(timeLabel(row));
   }
   if (!programs.size) cell.textContent = '–';
   for (const program of programs.values()) {
