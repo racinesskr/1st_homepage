@@ -77,7 +77,7 @@ function renderByDay(rows, table, selectedGrade) {
         const name = programName(row.name);
         const detail = document.createElement('small');
         const grades = gradeLabels(row.grade).map(shortGrade).join('·');
-        detail.textContent = [row.subject, grades, row.end ? `${row.end}까지` : ''].filter(Boolean).join(' · ');
+        detail.textContent = [row.subject, grades, row.teacher, row.end ? `${row.end}까지` : ''].filter(Boolean).join(' · ');
         entry.append(name, detail);
         cell.append(entry);
       }
@@ -119,8 +119,8 @@ function formatProgramSlots(slots) {
 function renderPrograms(cell, rows, subject, grade) {
   const programs = new Map();
   for (const row of rows) {
-    const key = JSON.stringify([row.name, row.subject]);
-    if (!programs.has(key)) programs.set(key, { name: row.name, subject: row.subject, slots: new Map() });
+    const key = JSON.stringify([row.name, row.subject, row.teacher || '']);
+    if (!programs.has(key)) programs.set(key, { name: row.name, subject: row.subject, teacher: row.teacher, slots: new Map() });
     const { slots } = programs.get(key);
     const time = timeLabel(row);
     if (!slots.has(row.day)) slots.set(row.day, new Set());
@@ -132,9 +132,9 @@ function renderPrograms(cell, rows, subject, grade) {
     entry.className = 'program-entry';
     colorEntry(entry, grade, program.name);
     entry.append(programName(program.name));
-    if (program.subject !== subject) {
+    if (program.subject !== subject || program.teacher) {
       const detail = document.createElement('small');
-      detail.textContent = ` · ${program.subject}`;
+      detail.textContent = ' · ' + [program.subject !== subject ? program.subject : '', program.teacher].filter(Boolean).join(' · ');
       entry.append(detail);
     }
     for (const [time, days] of formatProgramSlots(program.slots)) {

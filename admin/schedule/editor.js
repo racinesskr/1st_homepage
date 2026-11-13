@@ -64,6 +64,7 @@ function addRow(values) {
   const fragment = document.querySelector('#row-template').content.cloneNode(true);
   const row = fragment.querySelector('fieldset');
   if (values) {
+    row.dataset.teacher = values.teacher ?? '';
     for (const field of fields) row.querySelector(`[name="${field}"]`).value = values[field] ?? '';
   }
   row.querySelector('.remove').addEventListener('click', () => {
@@ -182,7 +183,7 @@ editor.addEventListener('submit', event => {
   event.preventDefault();
   const data = [...rows.children].map(row => {
     const values = Object.fromEntries(fields.map(field => [field, row.querySelector(`[name="${field}"]`).value]));
-    return { ...values, day: Number(values.day) };
+    return { ...values, day: Number(values.day), teacher: row.dataset.teacher || '' };
   });
   if (data.some(row => row.end && row.start >= row.end)) return report('종료 시간은 시작 시간보다 뒤여야 합니다.', true);
   const prompt = data.length ? `수업 ${data.length}개를 공개할까요?` : '모든 수업을 공개 시간표에서 내릴까요?';

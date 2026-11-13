@@ -86,7 +86,9 @@ function cleanRows(rows) {
       details[field] = row[field].trim();
       if (!details[field] || details[field].length > 60) return null;
     }
-    clean.push({ day: row.day, start: row.start, end, ...details });
+    const teacher = typeof row.teacher === 'string' ? row.teacher.trim() : '';
+    if (row.teacher != null && (typeof row.teacher !== 'string' || teacher.length > 60)) return null;
+    clean.push({ day: row.day, start: row.start, end, ...details, ...(teacher ? { teacher } : {}) });
   }
   return clean.sort((a, b) => a.day - b.day || a.start.localeCompare(b.start) || a.name.localeCompare(b.name, 'ko'));
 }
