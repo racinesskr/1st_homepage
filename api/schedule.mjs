@@ -1,9 +1,10 @@
 import { createHash, createHmac, randomBytes, scrypt, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
-import { BlobPreconditionFailedError, get, head, put } from '@vercel/blob';
+import { BlobPreconditionFailedError, get, put } from '@vercel/blob';
 import { novemberRows, novemberTitle } from '../schedule/november-reference.js';
 
-const pathname = 'schedule/weekly.json';
+const pathname = 'schedule/weekly-current.json';
+const previousPathname = 'schedule/weekly.json';
 const credentialsPath = 'schedule/admin.json';
 const deriveKey = promisify(scrypt);
 const lifetime = 60 * 60 * 4;
@@ -66,14 +67,11 @@ async function login(request, setupCode, credentials) {
 }
 
 async function readSchedule() {
-  const blob = await get(pathname, { access: 'private', useCache: false });
+  const current = await get(pathname, { access: 'private', useCache: false });
+  const blob = current ?? await get(previousPathname, { access: 'private', useCache: false });
   if (!blob) return { rows: novemberRows, title: novemberTitle, updatedAt: null, version: null };
-  const metadata = await head(blob.blob.url);
-  const verified = await get(pathname, { access: 'private', useCache: false });
-  if (!verified || blob.blob.etag !== verified.blob.etag) throw new BlobPreconditionFailedError();
-  await blob.stream.cancel();
-  const data = await new Response(verified.stream).json();
-  return { rows: data.rows, title: data.title ?? '', updatedAt: data.updatedAt, version: metadata.etag };
+  const data = await new Response(blob.stream).json();
+  return { rows: data.rows, title: data.title ?? '', updatedAt: data.updatedAt, version: current?.blob.etag ?? null };
 }
 
 function cleanRows(rows) {
