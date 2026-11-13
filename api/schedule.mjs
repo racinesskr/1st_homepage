@@ -149,7 +149,10 @@ async function handler(request) {
   try {
     if (request.method === 'GET' && !url.searchParams.has('edit')) {
       const { rows, title, updatedAt } = await readSchedule();
-      return json({ rows, title, updatedAt });
+      const publicRows = rows.map(({ day, start, end, subject, grade, name }) => ({
+        day, start, end, subject, grade, name
+      }));
+      return json({ rows: publicRows, title, updatedAt });
     }
 
     if (request.method !== 'GET' && request.method !== 'POST' && request.method !== 'PUT') {
