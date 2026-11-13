@@ -106,25 +106,14 @@ function compareGrades(a, b) {
   return schoolLevel(a) - schoolLevel(b) || gradeCollator.compare(a, b);
 }
 
-function formatProgramSlots(slots) {
-  const groups = new Map();
-  for (const [day, times] of [...slots].sort(([a], [b]) => a - b)) {
-    const label = [...times].sort().join(', ');
-    if (!groups.has(label)) groups.set(label, []);
-    groups.get(label).push(weekdays[day - 1]);
-  }
-  return groups;
-}
-
 function renderPrograms(cell, rows, subject, grade) {
   const programs = new Map();
   for (const row of rows) {
-    const key = JSON.stringify([row.name, row.subject, row.teacher || '']);
-    if (!programs.has(key)) programs.set(key, { name: row.name, subject: row.subject, teacher: row.teacher, slots: new Map() });
+    const key = JSON.stringify([row.name, row.subject]);
+    if (!programs.has(key)) programs.set(key, { name: row.name, subject: row.subject, slots: new Map() });
     const { slots } = programs.get(key);
-    const time = timeLabel(row);
     if (!slots.has(row.day)) slots.set(row.day, new Set());
-    slots.get(row.day).add(time);
+    slots.get(row.day).add([timeLabel(row), row.teacher].filter(Boolean).join(' · '));
   }
   if (!programs.size) cell.textContent = '–';
   for (const program of programs.values()) {
@@ -132,20 +121,20 @@ function renderPrograms(cell, rows, subject, grade) {
     entry.className = 'program-entry';
     colorEntry(entry, grade, program.name);
     entry.append(programName(program.name));
-    if (program.subject !== subject || program.teacher) {
+    if (program.subject !== subject) {
       const detail = document.createElement('small');
-      detail.textContent = ' · ' + [program.subject !== subject ? program.subject : '', program.teacher].filter(Boolean).join(' · ');
+      detail.textContent = ' · ' + program.subject;
       entry.append(detail);
     }
-    for (const [time, days] of formatProgramSlots(program.slots)) {
+    for (const [day, labels] of [...program.slots].sort(([a], [b]) => a - b)) {
       const slot = document.createElement('span');
       slot.className = 'program-slot';
-      const dayNames = document.createElement('b');
-      dayNames.textContent = days.join('·');
+      const dayName = document.createElement('b');
+      dayName.textContent = weekdays[day - 1];
       const times = document.createElement('span');
       times.className = 'program-times';
-      times.textContent = time;
-      slot.append(dayNames, times);
+      times.textContent = [...labels].sort().join(', ');
+      slot.append(dayName, times);
       entry.append(slot);
     }
     cell.append(entry);
