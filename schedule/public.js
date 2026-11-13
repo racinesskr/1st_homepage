@@ -57,6 +57,33 @@ function programName(label) {
   return name;
 }
 
+function groupCurriculumMath(classes) {
+  const grouped = new Map();
+  const entries = [];
+  for (const row of classes) {
+    const grades = gradeLabels(row.grade).map(shortGrade);
+    if (!/^교과수학(?:반)?$/.test(row.name.replace(/\s/g, '')) ||
+        subjectColumn(row.subject) !== '수학' ||
+        !grades.length || !grades.every(grade => /^(?:초[1-6]|중[1-3])$/.test(grade))) {
+      entries.push(row);
+      continue;
+    }
+    for (const grade of grades) {
+      const range = grade.startsWith('중') ? '중1~중3' :
+        Number(grade[1]) <= 3 ? '초1~초3' : '초4~초6';
+      if (grouped.has(range)) {
+        const entry = grouped.get(range);
+        if (entry.end !== row.end) entry.end = '';
+        continue;
+      }
+      const entry = { ...row, name: '교과수학반 ' + range, grade: '' };
+      grouped.set(range, entry);
+      entries.push(entry);
+    }
+  }
+  return entries;
+}
+
 function renderByDay(rows, table) {
   const slots = new Map();
   for (const row of rows) {
@@ -69,7 +96,7 @@ function renderByDay(rows, table) {
     addRowHeading(line, time);
     for (const classes of days) {
       const cell = line.insertCell();
-      for (const row of classes) {
+      for (const row of groupCurriculumMath(classes)) {
         const entry = document.createElement('p');
         entry.className = 'class-entry';
         entry.title = row.subject;
