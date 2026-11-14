@@ -39,13 +39,24 @@
 .review-notes li::before {
   content: "";
   position: absolute;
-  top: -4px;
-  left: calc(50% - 22px);
-  width: 44px;
-  height: 12px;
-  background: #ffffffaa;
-  box-shadow: 0 1px 2px #4b3c331a;
-  transform: rotate(-4deg);
+  z-index: 1;
+  top: -7px;
+  left: calc(50% - 27px);
+  width: 54px;
+  height: 18px;
+  background: linear-gradient(106deg,
+    #ffffff60 0%,
+    #fffef0b5 14%,
+    #ffffff45 37%,
+    #ffffffb5 57%,
+    #fafaf56e 80%,
+    #ffffff55 100%);
+  border-top: 1px solid #ffffff82;
+  border-bottom: 1px solid #6a59651f;
+  box-shadow: 0 2px 3px #30212c35, 0 6px 7px #30212c14,
+              inset 0 1px 1px #ffffffa0, inset 0 -1px 1px #756a7620;
+  transform: rotate(-5deg) skewX(-7deg);
+  pointer-events: none;
 }
 
 .review-notes li:nth-child(4n + 2) { background: #f9dce6; transform: rotate(1.5deg); }
