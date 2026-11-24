@@ -89,7 +89,8 @@ input,select{width:100%;min-width:0;border:1px solid #bdaeb4;border-radius:4px;p
 
 @media (max-width: 900px) {
   .day-tables { flex-direction: column; align-items: stretch; }
-  .saturday-schedule { flex: auto; }
+  .weekday-schedule,
+  .saturday-schedule { flex: 0 0 auto; }
 }
 
 .schedule-hero .wrap {
