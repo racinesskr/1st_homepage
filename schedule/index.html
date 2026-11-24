@@ -41,20 +41,24 @@
       <p id="schedule-status" class="status" role="status">시간표를 불러오는 중입니다.</p>
       <noscript><p>시간표를 보려면 브라우저에서 JavaScript를 켜 주세요.</p></noscript>
       <div id="schedule-by-day" class="day-tables" hidden>
-        <div id="weekday-schedule" class="table-scroll weekday-schedule" role="region" aria-label="평일 시간표" tabindex="0">
-          <table>
-            <caption>평일 수업 시간표</caption>
+        <section id="weekday-schedule" class="day-schedule weekday-schedule" aria-labelledby="weekday-heading">
+          <h3 id="weekday-heading" class="day-schedule-heading">평일 수업 시간표</h3>
+          <div class="table-scroll" role="region" aria-label="평일 시간표" tabindex="0">
+          <table aria-labelledby="weekday-heading">
             <thead><tr><th scope="col">시작 시간</th><th scope="col">월요일</th><th scope="col">화요일</th><th scope="col">수요일</th><th scope="col">목요일</th><th scope="col">금요일</th></tr></thead>
             <tbody id="schedule-rows"></tbody>
           </table>
-        </div>
-        <div id="saturday-schedule" class="table-scroll saturday-schedule" role="region" aria-label="토요일 시간표" tabindex="0">
-          <table>
-            <caption>토요일 수업 시간표</caption>
+          </div>
+        </section>
+        <section id="saturday-schedule" class="day-schedule saturday-schedule" aria-labelledby="saturday-heading">
+          <h3 id="saturday-heading" class="day-schedule-heading">토요일 수업 시간표</h3>
+          <div class="table-scroll" role="region" aria-label="토요일 시간표" tabindex="0">
+          <table aria-labelledby="saturday-heading">
             <thead><tr><th scope="col">시작 시간</th><th scope="col">토요일</th></tr></thead>
             <tbody id="saturday-rows"></tbody>
           </table>
-        </div>
+          </div>
+        </section>
       </div>
       <div id="schedule-by-grade" class="table-scroll" role="region" aria-label="학년별 시간표" tabindex="0" hidden>
         <table class="grade-table">

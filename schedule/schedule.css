@@ -122,3 +122,21 @@ input,select{width:100%;min-width:0;border:1px solid #bdaeb4;border-radius:4px;p
   }
   .schedule-hero p { font-size: 14px; }
 }
+
+.day-schedule {
+  overflow: hidden;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.day-schedule-heading {
+  margin: 0;
+  padding: 10px 16px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+.day-schedule > .table-scroll {
+  border: 0;
+  border-radius: 0;
+}
