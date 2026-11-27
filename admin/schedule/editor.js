@@ -34,6 +34,51 @@ function getMonicaToken() {
 }
 let version;
 let dirty = false;
+const draftKey = 'hawhy.schedule.draft';
+const draftStatus = document.querySelector('#draft-status');
+let draftSaved = false;
+
+function readDraft() {
+  try {
+    const data = JSON.parse(localStorage.getItem(draftKey));
+    if (data && typeof data.title === 'string' && Array.isArray(data.rows) &&
+        data.rows.length <= 150 && data.rows.every(row => row && typeof row === 'object') &&
+        (data.version === null || typeof data.version === 'string')) return data;
+  } catch {
+    draftStatus.textContent = '이 브라우저에서 임시저장한 내용을 읽을 수 없습니다.';
+  }
+  return null;
+}
+
+function editorData() {
+  const classes = [...rows.children].map(row => {
+    const values = Object.fromEntries(fields.map(field => [field, row.querySelector(`[name="${field}"]`).value]));
+    return { ...values, day: Number(values.day), teacher: row.dataset.teacher || '' };
+  });
+  return { rows: classes, title: editor.elements.scheduleTitle.value, version };
+}
+
+function saveDraft() {
+  dirty = true;
+  try {
+    localStorage.setItem(draftKey, JSON.stringify(editorData()));
+    draftSaved = true;
+    draftStatus.textContent = '이 브라우저에 임시저장했습니다.';
+  } catch {
+    draftSaved = false;
+    draftStatus.textContent = '임시저장할 수 없습니다. 편집 화면을 열어 두세요.';
+  }
+}
+
+function clearDraft() {
+  draftSaved = false;
+  try {
+    localStorage.removeItem(draftKey);
+    draftStatus.textContent = '';
+  } catch {
+    draftStatus.textContent = '브라우저에 저장된 초안을 지울 수 없습니다.';
+  }
+}
 
 function report(message, error = false) {
   status.toggleAttribute('data-error', error);
@@ -70,7 +115,7 @@ function addRow(values) {
   row.querySelector('.remove').addEventListener('click', () => {
     const next = row.nextElementSibling || row.previousElementSibling;
     row.remove();
-    dirty = true;
+    saveDraft();
     (next?.querySelector('select') || add).focus();
   });
   rows.append(fragment);
@@ -84,6 +129,18 @@ function show(data) {
   data.rows.forEach(addRow);
   dirty = false;
   editor.hidden = false;
+}
+
+function restoreEditor(published) {
+  const draft = readDraft();
+  show(draft ?? published);
+  if (draft) {
+    dirty = true;
+    draftSaved = true;
+    draftStatus.textContent = draft.version === published.version
+      ? '임시저장한 초안을 불러왔습니다.'
+      : '초안을 불러왔습니다. 다른 공개본이 있어 이 초안을 바로 공개할 수 없습니다.';
+  }
 }
 
 async function run(form, action) {
@@ -113,7 +170,7 @@ login.addEventListener('submit', event => {
       return;
     }
     token = result.token;
-    if (!dirty) show(await request('GET', undefined, '?edit'));
+    if (!dirty) restoreEditor(await request('GET', undefined, '?edit'));
     login.hidden = true;
     report(dirty ? '다시 로그인했습니다. 수정한 내용을 공개할 수 있습니다.' : '공개 시간표를 불러왔습니다.');
     add.focus();
@@ -150,14 +207,14 @@ setup.addEventListener('submit', event => {
 add.addEventListener('click', () => {
   if (rows.children.length >= 150) return report('수업은 최대 150개까지 추가할 수 있습니다.', true);
   addRow();
-  dirty = true;
+  saveDraft();
 });
-editor.addEventListener('input', () => { dirty = true; });
+editor.addEventListener('input', saveDraft);
 
 document.querySelector('#import-november').addEventListener('click', () => {
   if ((rows.children.length || dirty) && !confirm('편집 화면을 11월 시간표로 바꿀까요? 공개본은 공개 버튼을 눌러야 바뀝니다.')) return;
   show({ rows: novemberRows, title: novemberTitle, version });
-  dirty = true;
+  saveDraft();
   report(`11월 시간표의 수업 ${novemberRows.length}개를 불러왔습니다. 확인 후 공개해 주세요.`);
 });
 
@@ -165,11 +222,12 @@ document.querySelector('#reload').addEventListener('click', () => {
   if (dirty && !confirm('작성 중인 내용이 사라집니다. 현재 공개본을 다시 불러올까요?')) return;
   run(editor, async () => {
     show(await request('GET', undefined, '?edit'));
+    clearDraft();
     report('현재 공개본을 불러왔습니다.');
   });
 });
 document.querySelector('#logout').addEventListener('click', () => {
-  if (dirty && !confirm('작성 중인 내용이 사라집니다. 로그아웃할까요?')) return;
+  if (dirty && !draftSaved && !confirm('임시저장하지 못한 내용이 사라집니다. 로그아웃할까요?')) return;
   token = undefined;
   dirty = false;
   rows.replaceChildren();
@@ -181,20 +239,19 @@ document.querySelector('#logout').addEventListener('click', () => {
 
 editor.addEventListener('submit', event => {
   event.preventDefault();
-  const data = [...rows.children].map(row => {
-    const values = Object.fromEntries(fields.map(field => [field, row.querySelector(`[name="${field}"]`).value]));
-    return { ...values, day: Number(values.day), teacher: row.dataset.teacher || '' };
-  });
-  if (data.some(row => row.end && row.start >= row.end)) return report('종료 시간은 시작 시간보다 뒤여야 합니다.', true);
-  const prompt = data.length ? `수업 ${data.length}개를 공개할까요?` : '모든 수업을 공개 시간표에서 내릴까요?';
+  const data = editorData();
+  if (data.rows.some(row => row.end && row.start >= row.end)) return report('종료 시간은 시작 시간보다 뒤여야 합니다.', true);
+  const title = data.title.trim() || '수업 시간표';
+  const prompt = data.rows.length ? `‘${title}’의 수업 ${data.rows.length}개를 공개할까요?` : '모든 수업을 공개 시간표에서 내릴까요?';
   if (!confirm(prompt)) return;
   run(editor, async () => {
-    show(await request('PUT', { rows: data, title: editor.elements.scheduleTitle.value, version }));
+    show(await request('PUT', data));
+    clearDraft();
     report('시간표를 공개했습니다.');
   });
 });
 window.addEventListener('beforeunload', event => {
-  if (dirty) {
+  if (dirty && !draftSaved) {
     event.preventDefault();
     event.returnValue = true;
   }
@@ -203,7 +260,7 @@ if (embedded) {
   document.querySelector('#logout').hidden = true;
   report('모니카 로그인 확인 중…');
   request('GET', undefined, '?edit').then(data => {
-    show(data);
+    restoreEditor(data);
     report('');
   }).catch(error => report(error.message, true));
 } else {

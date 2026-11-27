@@ -56,7 +56,7 @@
       </form>
       <form id="editor" class="form-panel" hidden>
         <div class="toolbar">
-          <h2>공개 시간표 편집</h2>
+          <h2>시간표 편집</h2>
           <a class="button secondary" href="/admin/reviews">학생 수업 후기 관리</a>
           <div>
             <button id="import-november" class="button secondary" type="button">11월 시간표 불러오기</button>
@@ -64,7 +64,9 @@
             <button id="logout" class="button secondary" type="button">로그아웃</button>
           </div>
         </div>
-        <label>시간표 제목 <input name="scheduleTitle" placeholder="예: 11월 수업 시간표" maxlength="60"></label>
+        <label>시간표 제목 <input name="scheduleTitle" placeholder="예: 12월 수업 시간표" maxlength="60"></label>
+        <p class="muted">공개본을 바탕으로 다음 달 시간표를 작성할 수 있습니다. 수정 내용은 이 브라우저에 임시저장되며, 시간표 공개를 눌러야 학부모용 화면에 반영됩니다.</p>
+        <p id="draft-status" class="muted" role="status"></p>
         <p class="muted">수업 한 개마다 항목을 추가해 주세요. 같은 학년은 대상 학년을 같은 이름으로 입력하면 학년별 표에서 함께 표시됩니다.</p>
         <div id="rows"></div>
         <div class="toolbar">

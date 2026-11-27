@@ -1,4 +1,5 @@
 (()=>{
+  if(Date.now() >= Date.parse('2026-12-13T00:00:00+09:00')) return;
   if(document.getElementById('wise-floating-banner')) return;
   const booking='https://m.booking.naver.com/booking/13/bizes/881516/items/5642743?area=pll&lang=ko&service-target=map-pc&startDate=2026-10-28&theme=place';
   const style=document.createElement('style');
